@@ -1,0 +1,214 @@
+
+// DAVID JONES CONNECT FOUR LAB #1 SCHEDULE 1:10 PM FRIDAY FEBRUARY 26 2016 ROOM CCSB 1.0706 GET THERE AT 12:45
+
+import java.util.Random;
+
+public class Game {
+
+	private Token[][] grid;
+	private Board board;
+	private boolean start;
+	private GUI gui;
+	private boolean turn;
+	private int turnCount;
+	private String[] information;
+	private int index;
+	private boolean reset;
+
+	public Game() {
+		turnCount = 1;
+		information = new String[56];
+		grid = new Token[7][8];
+		board = new Board(grid, 7, 8, "one", "two");
+		start = isPlayerOnesTurn();
+		gui = new GUI(start, board);
+		index = 0;
+	}
+
+	public void enterPlayerOne() {
+		String name = gui.getInputString();
+		getBoard().getPlayerOne().setName(name);
+	}
+
+	public void enterPlayerTwo() {
+		String name = gui.getInputString();
+		getBoard().getPlayerTwo().setName(name);
+	}
+
+	public void enterPlayers() {
+		gui.setTextbox("Please enter Player 1's name");
+		do {
+			enterPlayerOne();
+			gui.setIsCalled(false);
+		} while (!gui.getIsCalled());
+		gui.setTextbox("Please enter Player 2's name");
+		do {
+			enterPlayerTwo();
+			gui.setIsCalled(false);
+		} while (!gui.getIsCalled());
+		// gui.setIsCalled(false);
+		// do {
+		// enterPlayerOne();
+		// gui.setIsCalled(false);
+		// gui.setTextbox("Player 1's name entered successfully");
+		// } while (!gui.getIsCalled());
+		// gui.setTextbox("Please enter Player 2's name");
+		// gui.setIsCalled(false);
+		// do{
+		// enterPlayerTwo();
+		// gui.setIsCalled(false);
+		// gui.setTextbox("Player 2's name entered successfully");
+		// } while (!gui.getIsCalled());
+		//
+		// }
+	}
+
+	public boolean isPlayerOnesTurn() {
+		// Picks whether or not Player one goes first.
+		Random r = new Random();
+		setTurn(r.nextBoolean());
+		return getTurn();
+
+	}
+
+	public String enterToken(String token) {
+		Token x = new Token("X", board.getPlayerOne());
+		Token o = new Token("O", board.getPlayerTwo());
+		int column;
+		gui.setIsCalled(false);
+		do {
+			try {
+				Integer.parseInt(gui.getInputString());
+				column = Integer.parseInt(gui.getInputString());
+			} catch (NumberFormatException e) {
+				if (gui.getIsCalled())
+					gui.setTextbox("Input is currently not a integer, try again");
+				return "Input is currently not a integer, try again";
+			}
+			if (token.equals("X")) {
+				String message = board.placeToken(x, column);
+				information[index] = (board.getLocation().concat(". Player " + board.getPlayerOne().getName()
+						+ "'s turn, Token X" + " , Turn " + getTurnCount()));
+				setTurnCount(getTurnCount() + 1);
+				gui.setIsCalled(false);
+				return message;
+			}
+			if (token.equals("O")) {
+				String message = board.placeToken(o, column);
+				information[index] = (board.getLocation().concat(". Player " + board.getPlayerTwo().getName()
+						+ "'s turn, Token O" + " , Turn " + getTurnCount()));
+				setTurnCount(getTurnCount() + 1);
+				gui.setIsCalled(false);
+				return message;
+			}
+		} while (!gui.getIsCalled());
+		gui.matchGrid();
+		return "Error";
+	}
+
+	public void addInformationToField() {
+		for (int i = 0; i < information.length; i++) {
+			if (information[i] == null)
+				break;
+			gui.setInformation(information[i]);
+		}
+	}
+
+	public void playerOneTurn() {
+		String message = "";
+		gui.setTextbox("Player " + board.getPlayerOne().getName() + "'s turn. Enter the column please");
+		do {
+			message = enterToken("X");
+		} while (message.equals("Input is currently not a integer, try again"));
+		gui.setTextbox(message);
+		addInformationToField();
+		setReset(resetIfButtonPressed());
+		gui.setInputString("");
+		gui.matchGrid();
+	}
+
+	public void playerTwoTurn() {
+		String message = "";
+		gui.setTextbox("Player " + board.getPlayerTwo().getName() + "'s turn. Enter the column please");
+		do {
+			message = enterToken("O");
+		} while (message.equals("Input is currently not a integer, try again"));
+		gui.setTextbox(message);
+		addInformationToField();
+		setReset(resetIfButtonPressed());
+		gui.setInputString("");
+		gui.matchGrid();
+	}
+
+	public boolean gameOver() {
+		if (board.playerOneHasWon() == true) {
+			gui.setTextbox("Player " + board.getPlayerOne().getName() + " has won!");
+			return true;
+		} else if (board.playerTwoHasWon() == true) {
+			gui.setTextbox("Player " + board.getPlayerTwo().getName() + " has won!");
+			return true;
+		} else if (board.isTie() == true) {
+			gui.setTextbox("The game is a tie, game over");
+			return true;
+		} else
+			return false;
+	}
+
+	public void setBoard(Board b) {
+		board = b;
+	}
+
+	public Board getBoard() {
+		return board;
+	}
+
+	public void setTurn(boolean t) {
+		turn = t;
+	}
+
+	public void setTurnCount(int i) {
+		turnCount = i;
+	}
+
+	public int getTurnCount() {
+		return turnCount;
+	}
+
+	public boolean getTurn() {
+		return turn;
+	}
+
+	public void setGUI(GUI g) {
+		gui = g;
+	}
+
+	public void setReset(boolean b) {
+		reset = b;
+	}
+
+	public boolean getReset() {
+		return reset;
+	}
+
+	public void sendPlayerNames() {
+		gui.setPlayerOne(getBoard().getPlayerOne().getName());
+		gui.setPlayerTwo(getBoard().getPlayerTwo().getName());
+	}
+
+	public GUI getGUI() {
+		return gui;
+	}
+
+	public boolean resetIfButtonPressed() {
+		if (getGUI().getIsForfeit() || getGUI().getIsRestart()) {
+			getBoard().resetGame();
+			gui.setIsForfeit(false);
+			gui.setIsRestart(false);
+			return true;
+		}
+		return false;
+	}
+
+	public void testing() {
+	}
+}
