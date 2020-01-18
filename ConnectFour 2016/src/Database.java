@@ -15,7 +15,7 @@ public class Database {
 		rs = null;
 		sql = "";
 		username = "root";
-		password = "hiroshimablast";
+		password = "beerfordrink";
 	}
 
 	public void start() {
