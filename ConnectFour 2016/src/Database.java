@@ -2,7 +2,7 @@ import java.sql.*;
 
 public class Database {
 
-	private Connection conn;
+	private Connection connector;
 	private Statement statement;
 	private ResultSet rs;
 	String sql;
@@ -10,7 +10,7 @@ public class Database {
 	String password;
 
 	public Database() {
-		conn = null;
+		connector = null;
 		statement = null;
 		rs = null;
 		sql = "";
@@ -21,7 +21,7 @@ public class Database {
 	public void start() {
 
 		try {
-			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/connectfour?useSSL=false", username,
+			connector = DriverManager.getConnection("jdbc:mysql://localhost:3306/connectfour?useSSL=false", username,
 					password);
 			statement = conn.createStatement();
 			statement.executeUpdate("CREATE DATABASE IF NOT EXISTS ConnectFour");
@@ -68,8 +68,8 @@ public class Database {
 				rs.close();
 			if (statement != null)
 				statement.close();
-			if (conn != null)
-				conn.close();
+			if (connector != null)
+				connector.close();
 		} catch (SQLException se) {
 			System.out.println("Exception: " + se.getMessage());
 		}
